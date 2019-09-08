@@ -1,13 +1,17 @@
 package com.crawler.spider.webclient;
 
+import com.crawler.spider.entity.User;
 import com.crawler.spider.utils.VertxUtils;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 import io.vertx.core.buffer.Buffer;
+import io.vertx.core.json.JsonObject;
+import io.vertx.ext.web.client.HttpRequest;
 import io.vertx.ext.web.client.HttpResponse;
 import io.vertx.ext.web.client.WebClient;
+import io.vertx.ext.web.codec.BodyCodec;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -34,17 +38,38 @@ public class BossVertxWebClient extends AbstractVerticle {
         String host = "https://www.zhipin.com/wapi/zpCommon/data/position.json";
         String requestURI = "/";
 
-        client.get(host, requestURI)
+        HttpRequest<Buffer> bufferHttpRequest = client.get(host, requestURI);
+        bufferHttpRequest
                 .addQueryParam("param", "param_value")
+                .timeout(5000)
+                .as(BodyCodec.json(User.class))
                 .send(ar -> {
                     if (ar.succeeded()) {
-                        HttpResponse<Buffer> response = ar.result();
-                        log.info("Got HTTP response with status:{},with data:{}", response.statusCode(),
-                                response.body().toString("ISO-8859-1"));
+                        HttpResponse<User> response = ar.result();
+                        //在收到响应后手动执行完整性检查
+                        if (response.statusCode() == 200 && "application/json".equals(response.getHeader("content-type"))) {
+                            // Decode the body as a json object
+                            User user = response.body();
+
+                            log.info("Got HTTP response with status:{}", response.statusCode());
+                            log.info("getFirstName:{},getLastName:{}", user.getFirstName(), user.getLastName());
+
+                        } else {
+                            log.info("Something went wrong :{}", response.statusCode());
+                        }
+
                     } else {
                         log.error("Got HTTP response with status", ar.cause());
                     }
                 });
+
+        //该send方法可以安全地多次调用，使配置和重用HttpRequest对象变得非常容易
+        // Same request again
+        bufferHttpRequest.send(ar -> {
+            if (ar.succeeded()) {
+                // Ok
+            }
+        });
     }
 
     //可选 - 在取消部署Verticle时调用
