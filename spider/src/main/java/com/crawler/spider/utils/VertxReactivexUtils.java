@@ -1,18 +1,18 @@
 package com.crawler.spider.utils;
 
 import com.crawler.spider.webclient.MyCustomException;
-import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
-import io.vertx.core.buffer.Buffer;
-import io.vertx.core.http.HttpClient;
 import io.vertx.core.http.HttpClientOptions;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.web.client.HttpResponse;
-import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.client.WebClientOptions;
-import io.vertx.ext.web.client.predicate.ErrorConverter;
-import io.vertx.ext.web.client.predicate.ResponsePredicate;
-import io.vertx.ext.web.client.predicate.ResponsePredicateResult;
+import io.vertx.reactivex.core.Vertx;
+import io.vertx.reactivex.core.buffer.Buffer;
+import io.vertx.reactivex.core.http.HttpClient;
+import io.vertx.reactivex.ext.web.client.HttpResponse;
+import io.vertx.reactivex.ext.web.client.WebClient;
+import io.vertx.reactivex.ext.web.client.predicate.ErrorConverter;
+import io.vertx.reactivex.ext.web.client.predicate.ResponsePredicate;
+import io.vertx.reactivex.ext.web.client.predicate.ResponsePredicateResult;
 
 import java.util.Objects;
 import java.util.function.Function;
@@ -22,7 +22,7 @@ import java.util.function.Function;
  * Vertx对象是Vert.x的控制中心,是核心对象
  * Vertx对象是是工厂
  */
-public class VertxUtils {
+public class VertxReactivexUtils {
     /**
      * 大多数应用程序只需要一个Vert.x实例，但如果您需要（例如）
      * 事件总线或不同服务器和客户端组之间的隔离，则可以创建多个Vert.x实例。
