@@ -51,6 +51,14 @@ public class BossReactivexWebClient extends AbstractVerticle {
             log.info("Got HTTP response with status:{}", response.statusCode());
             log.info("getFirstName:{},getLastName:{}", user.getFirstName(), user.getLastName());
         });
+        //Single可以多次订阅
+        single.subscribe(response -> {
+            // Decode the body as a json object
+            User user = response.body();
+
+            log.info("Got HTTP response with status:{}", response.statusCode());
+            log.info("getFirstName:{},getLastName:{}", user.getFirstName(), user.getLastName());
+        });
     }
 
     //可选 - 在取消部署Verticle时调用
