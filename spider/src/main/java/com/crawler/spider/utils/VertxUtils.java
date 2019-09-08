@@ -2,6 +2,10 @@ package com.crawler.spider.utils;
 
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
+import io.vertx.ext.web.client.WebClient;
+import io.vertx.ext.web.client.WebClientOptions;
+
+import java.util.Objects;
 
 /**
  * Vertx使用流畅的api
@@ -41,6 +45,32 @@ public class VertxUtils {
      * @return Vertx
      */
     public static Vertx getVertx(VertxOptions vertxOptions) {
+        Objects.requireNonNull(vertxOptions);
         return Vertx.vertx(vertxOptions);
+    }
+
+    /**
+     * 使用默认选项创建实例
+     *
+     * @param vertx
+     * @return
+     */
+    public static WebClient getWebClient(Vertx vertx) {
+        Objects.requireNonNull(vertx);
+        return WebClient.create(vertx);
+    }
+
+    /**
+     * 配置选项
+     *
+     * @param vertx
+     * @param webClientOptions
+     * @return
+     */
+    public static WebClient getWebClient(Vertx vertx, WebClientOptions webClientOptions) {
+        Objects.requireNonNull(vertx);
+        Objects.requireNonNull(webClientOptions);
+
+        return WebClient.create(vertx, webClientOptions);
     }
 }
