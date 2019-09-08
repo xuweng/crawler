@@ -2,10 +2,13 @@ package com.crawler.spider.utils;
 
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
+import io.vertx.ext.web.client.HttpResponse;
 import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.client.WebClientOptions;
+import io.vertx.ext.web.client.predicate.ResponsePredicateResult;
 
 import java.util.Objects;
+import java.util.function.Function;
 
 /**
  * Vertx使用流畅的api
@@ -72,5 +75,22 @@ public class VertxUtils {
         Objects.requireNonNull(webClientOptions);
 
         return WebClient.create(vertx, webClientOptions);
+    }
+
+    /**
+     * 当现有谓词不符合您的需求时，还可以创建自定义谓词：
+     *
+     * @return 自定义谓词
+     */
+    public static Function<HttpResponse<Void>, ResponsePredicateResult> getMethodsPredicate() {
+        return resp -> {
+            String methods = resp.getHeader("Access-Control-Allow-Methods");
+            if (methods != null) {
+                if (methods.contains("POST")) {
+                    return ResponsePredicateResult.success();
+                }
+            }
+            return ResponsePredicateResult.failure("Does not work");
+        };
     }
 }

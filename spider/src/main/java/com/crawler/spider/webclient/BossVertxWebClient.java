@@ -11,6 +11,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.client.HttpRequest;
 import io.vertx.ext.web.client.HttpResponse;
 import io.vertx.ext.web.client.WebClient;
+import io.vertx.ext.web.client.predicate.ResponsePredicate;
 import io.vertx.ext.web.codec.BodyCodec;
 import lombok.extern.slf4j.Slf4j;
 
@@ -43,21 +44,16 @@ public class BossVertxWebClient extends AbstractVerticle {
                 .addQueryParam("param", "param_value")
                 .timeout(5000)
                 .as(BodyCodec.json(User.class))
+                .expect(ResponsePredicate.SC_SUCCESS)
+                .expect(ResponsePredicate.JSON)
                 .send(ar -> {
                     if (ar.succeeded()) {
                         HttpResponse<User> response = ar.result();
-                        //在收到响应后手动执行完整性检查
-                        if (response.statusCode() == 200 && "application/json".equals(response.getHeader("content-type"))) {
-                            // Decode the body as a json object
-                            User user = response.body();
+                        // Decode the body as a json object
+                        User user = response.body();
 
-                            log.info("Got HTTP response with status:{}", response.statusCode());
-                            log.info("getFirstName:{},getLastName:{}", user.getFirstName(), user.getLastName());
-
-                        } else {
-                            log.info("Something went wrong :{}", response.statusCode());
-                        }
-
+                        log.info("Got HTTP response with status:{}", response.statusCode());
+                        log.info("getFirstName:{},getLastName:{}", user.getFirstName(), user.getLastName());
                     } else {
                         log.error("Got HTTP response with status", ar.cause());
                     }
