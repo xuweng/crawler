@@ -34,15 +34,17 @@ public class BossVertxWebClient extends AbstractVerticle {
         String host = "https://www.zhipin.com/wapi/zpCommon/data/position.json";
         String requestURI = "/";
 
-        client.get(host, requestURI).send(ar -> {
-            if (ar.succeeded()) {
-                HttpResponse<Buffer> response = ar.result();
-                log.info("Got HTTP response with status:{},with data:{}", response.statusCode(),
-                        response.body().toString("ISO-8859-1"));
-            } else {
-                log.error("Got HTTP response with status", ar.cause());
-            }
-        });
+        client.get(host, requestURI)
+                .addQueryParam("param", "param_value")
+                .send(ar -> {
+                    if (ar.succeeded()) {
+                        HttpResponse<Buffer> response = ar.result();
+                        log.info("Got HTTP response with status:{},with data:{}", response.statusCode(),
+                                response.body().toString("ISO-8859-1"));
+                    } else {
+                        log.error("Got HTTP response with status", ar.cause());
+                    }
+                });
     }
 
     //可选 - 在取消部署Verticle时调用
