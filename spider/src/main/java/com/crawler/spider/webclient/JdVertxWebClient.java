@@ -7,23 +7,24 @@ import io.vertx.ext.web.client.HttpResponse;
 import io.vertx.ext.web.client.WebClient;
 import lombok.extern.slf4j.Slf4j;
 
-
 /**
  * @author hh
  */
 @Slf4j
-public class VertxWebClient extends AbstractVerticle {
+public class JdVertxWebClient extends AbstractVerticle implements Request {
 
+    @Override
     public void get() {
-        Runner.runExample(VertxWebClient.class);
+        Runner.runExample(JdVertxWebClient.class);
     }
 
     @Override
-    public void start() throws Exception {
-
+    public void start() {
         WebClient client = WebClient.create(vertx);
+        String host = "https://book.jd.com/";
+        String requestURI = "/";
 
-        client.get("https://book.jd.com/", "/").send(ar -> {
+        client.get(host, requestURI).send(ar -> {
             if (ar.succeeded()) {
                 HttpResponse<Buffer> response = ar.result();
                 log.info("Got HTTP response with status:{},with data:{}", response.statusCode(),

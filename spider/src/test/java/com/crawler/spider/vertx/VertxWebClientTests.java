@@ -1,13 +1,15 @@
 package com.crawler.spider.vertx;
 
-import com.crawler.spider.webclient.VertxWebClient;
+import com.crawler.spider.webclient.JdVertxWebClient;
+import com.crawler.spider.webclient.Request;
 import org.junit.Test;
 
-public class VertxWebClientTests {
-    private VertxWebClient vertxWebClient = new VertxWebClient();
+public class VertxWebClientTests implements Request {
+    private JdVertxWebClient jdVertxWebClient = new JdVertxWebClient();
 
     @Test
-    public void get() throws Exception {
-        vertxWebClient.get();
+    @Override
+    public void get() {
+        jdVertxWebClient.get();
     }
 }
