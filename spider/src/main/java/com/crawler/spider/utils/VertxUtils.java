@@ -1,10 +1,15 @@
 package com.crawler.spider.utils;
 
+import com.crawler.spider.webclient.MyCustomException;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
+import io.vertx.core.buffer.Buffer;
+import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.client.HttpResponse;
 import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.client.WebClientOptions;
+import io.vertx.ext.web.client.predicate.ErrorConverter;
+import io.vertx.ext.web.client.predicate.ResponsePredicate;
 import io.vertx.ext.web.client.predicate.ResponsePredicateResult;
 
 import java.util.Objects;
@@ -92,5 +97,27 @@ public class VertxUtils {
             }
             return ResponsePredicateResult.failure("Does not work");
         };
+    }
+
+    /**
+     * 创建自定义故障
+     * 默认情况下，响应谓词（包括预定义的谓词）使用默认的错误转换器，它会丢弃正文并传达一条简单的消息。您可以通过更改错误转换器来自定义异常类：
+     *
+     * @return 谓词
+     */
+    public static ResponsePredicate handleResponsePredicate() {
+        ErrorConverter converter = ErrorConverter.createFullBody(result -> {
+            // Invoked after the response body is fully received
+            HttpResponse<Buffer> response = result.response();
+            if (response.getHeader("content-type").equals("application/json")) {
+                // Error body is JSON data
+                JsonObject body = response.bodyAsJsonObject();
+                return new MyCustomException(body.getString("code"), body.getString("message"));
+            }
+            // Fallback to defaut message
+            return new MyCustomException(result.message());
+        });
+
+        return ResponsePredicate.create(ResponsePredicate.SC_SUCCESS, converter);
     }
 }
